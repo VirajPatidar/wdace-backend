@@ -1,5 +1,5 @@
 import nltk
-nltk.download('stopwords')
+# nltk.download('stopwords')
 
 import re
 import numpy as np
@@ -8,6 +8,8 @@ import pandas as pd
 from scipy.sparse.linalg import svds
 
 stop_words = nltk.corpus.stopwords.words('english')
+
+
 
 def normalize_document(doc):
     # lower case and remove special characters\whitespaces
@@ -22,12 +24,16 @@ def normalize_document(doc):
     doc = ' '.join(filtered_tokens)
     return doc
 
+
+
 def low_rank_svd(matrix, singular_count):
     u, s, vt = svds(matrix, k=singular_count)
     return u, s, vt
 
+
+
 def extractive_summariser(DOCUMENT):
-    nltk.download('punkt')
+    # nltk.download('punkt')
 
     DOCUMENT = re.sub(r'\n|\r', ' ', DOCUMENT)
     DOCUMENT = re.sub(r' +', ' ', DOCUMENT)
@@ -55,17 +61,6 @@ def extractive_summariser(DOCUMENT):
 
     num_sentences = 0
     
-    # if(l < 10):
-    #     num_sentences = 2
-    # elif(l < 50):
-    #     num_sentences = 5
-    # elif(l < 500):
-    #     num_sentences = 10
-    # elif(l < 1000):
-    #     num_sentences = 15
-    # else:
-    #     num_sentences = 20
-
     if(l < 10):
         num_sentences = 3
     elif(l < 100):
