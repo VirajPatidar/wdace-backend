@@ -8,9 +8,9 @@ from langdetect import detect
 
 
 from .utils.translate import detect_and_translate
-from .utils.extractive_summariser import extractive_summariser
-from .utils.keyword_extractor import keyword_extractor
-from .utils.scrape_url import getTextFromURL
+from .utils.keywordExtractor import keyword_extractor
+from .utils.getTitleTextSummary import getTitleTextSummary
+from .utils.scrapeURL import getTextFromURL
 
 # Create your views here.
 
@@ -20,38 +20,38 @@ class ClassifyAnalyseView(generics.GenericAPIView):
     def post(self, request):
 
         url = request.data.get('url')
-        text = getTextFromURL(url)
 
-        original_lang = iso639.to_name(detect(text))
-        translated_text = detect_and_translate(text, target_lang='en')
+        rawText = getTextFromURL(url)
+        original_lang = iso639.to_name(detect(rawText))
+        rawText = detect_and_translate(rawText, target_lang='en')
         
-        keywords = []
 
-        if(translated_text == ""):
-            extractive_summary = extractive_summariser(text)
-            keywords = keyword_extractor(text)
-            translated_text_len = 0
-        else:
-            extractive_summary = extractive_summariser(translated_text)
-            keywords = keyword_extractor(translated_text)
-            translated_text_len = len(translated_text.split())
+        title, mainText, extractive_summary = getTitleTextSummary(url)
+
+        
+        keywords = keyword_extractor(extractive_summary)
 
 
-        text_len = len(text.split())
+        title_len = len(title.split())
+        mainText_len = len(mainText.split())
         extractive_summary_len = len(extractive_summary.split())
+        rawText_len = len(rawText.split())
+
 
 
         return Response(
                         {
                             "len": {
-                                "text_len": text_len,
-                                "translated_text_len": translated_text_len,
-                                "extractive_summary_len": extractive_summary_len,
+                                "title_len": title_len, 
+                                "mainText_len": mainText_len, 
+                                "extractive_summary_len": extractive_summary_len, 
+                                "rawText_len": rawText_len, 
                             },
-                            "text": {
-                                "text": text,
-                                "translated_text": translated_text,
+                            "textual_data": {
+                                "title": title,
+                                "mainText": mainText,
                                 "extractive_summary": extractive_summary,
+                                "rawText": rawText,
                             },
                             "keywords": keywords,
                             "original_lang": original_lang
