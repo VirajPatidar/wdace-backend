@@ -49,10 +49,12 @@ def getTextFromURL(url):
 
         text_from_html = text_from_html.strip()
 
+        text_from_html = re.sub('\n', ' ', text_from_html)
         res = re.sub(' +', ' ', text_from_html)
 
         return res
 
     except Exception as e:
         print(e)
+        return(str(e))
 
