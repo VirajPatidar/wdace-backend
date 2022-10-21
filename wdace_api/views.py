@@ -10,6 +10,7 @@ from langdetect import detect
 from .utils.translate import detect_and_translate
 from .utils.keywordExtractor import keyword_extractor
 from .utils.getTitleTextSummary import getTitleTextSummary
+from .utils.getDomainTopics import getDomainTopics
 from .utils.scrapeURL import getTextFromURL
 
 # Create your views here.
@@ -27,6 +28,9 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         
 
         title, mainText, extractive_summary = getTitleTextSummary(url)
+
+        # Save in DB to build topic graph
+        domain, topics = getDomainTopics(mainText) # rawText gives noisy output
 
         
         keywords = keyword_extractor(extractive_summary)
@@ -53,6 +57,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                                 "extractive_summary": extractive_summary,
                                 "rawText": rawText,
                             },
+                            "domain": domain,
+                            "topics": topics,
                             "keywords": keywords,
                             "original_lang": original_lang
                         }, status=status.HTTP_201_CREATED)
