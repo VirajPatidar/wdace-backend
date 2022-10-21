@@ -14,6 +14,8 @@ from pathlib import Path
 from decouple import config
 import os
 
+import neomodel
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -93,6 +95,21 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+#neo4j settings
+# NEOMODEL_NEO4J_BOLT_URL = os.environ.get('NEO4J_BOLT_URL','bolt://username:password@localhost:7687')
+# you are free to add this configurations
+user = config('NEO4J_AURA_USERNAME')
+psw = config('NEO4J_AURA_PASSWORD')
+uri = config('NEO4J_AURA_URI')
+    
+neomodel.config.DATABASE_URL = 'neo4j+s://{}:{}@{}'.format(user, psw, uri)
+
+# NEOMODEL_NEO4J_BOLT_URL = config('NEO4J_BOLT_URL')
+NEOMODEL_SIGNALS = True
+NEOMODEL_FORCE_TIMEZONE = False
+NEOMODEL_ENCRYPTED_CONNECTION = True
+NEOMODEL_MAX_POOL_SIZE = 50
 
 
 # Password validation
