@@ -25,8 +25,8 @@ def getDomainTopics(text):
     # for kw, v in keywords:
     #     print("Keyphrase: ",kw, ": score", v)
 
-    domain = keywords[0][0]
-    topics = list(map(list, zip(*keywords[1:])))[0]
+    domain = keywords[0]
+    topics = list(map(list, zip(*keywords[1:])))
 
     return domain, topics
 
