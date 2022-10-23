@@ -13,6 +13,8 @@ from .utils.getTitleTextSummary import getTitleTextSummary
 from .utils.getDomainTopics import getDomainTopics
 from .utils.scrapeURL import getTextFromURL
 
+from .models import Topic
+
 # Create your views here.
 
 
@@ -31,17 +33,36 @@ class ClassifyAnalyseView(generics.GenericAPIView):
 
         # Save in DB to build topic graph
         domain, topics = getDomainTopics(mainText) # rawText gives noisy output
-
-        
         keywords = keyword_extractor(extractive_summary)
-
-
+        
         title_len = len(title.split())
         mainText_len = len(mainText.split())
         extractive_summary_len = len(extractive_summary.split())
         rawText_len = len(rawText.split())
 
-
+        obj = Topic.nodes.get_or_none(name=domain[0])
+        if obj:
+            urls = obj.urls
+            if url not in urls:
+                urls.append(url)
+                obj.urls = urls
+                obj.save()
+        else:
+            obj = Topic(name=domain[0], level=0, weight=float(domain[1]), urls=[url])
+            obj.save()
+        
+        for i in range(len(topics[0])):
+            topic_obj = Topic.nodes.get_or_none(name=topics[0][i])
+            if not topic_obj:
+                topic_obj = Topic(name=topics[0][i], level=1, weight=topics[1][i], urls=[url])
+                topic_obj.save()
+            else:
+                urls = topic_obj.urls
+                if url not in urls:
+                    urls.append(url)
+                    topic_obj.urls = urls
+                    topic_obj.save()
+            obj.hasTopic.connect(topic_obj)
 
         return Response(
                         {
@@ -57,8 +78,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                                 "extractive_summary": extractive_summary,
                                 "rawText": rawText,
                             },
-                            "domain": domain,
-                            "topics": topics,
+                            "domain": domain[0],
+                            "topics": topics[0],
                             "keywords": keywords,
                             "original_lang": original_lang
                         }, status=status.HTTP_201_CREATED)
