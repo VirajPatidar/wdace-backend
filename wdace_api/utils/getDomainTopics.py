@@ -30,14 +30,14 @@ def getDomainTopics(text):
     text=" ".join(text.split())
 
 
-    filtered_list = []
-    stop_words = nltk.corpus.stopwords.words('english')
-    words = word_tokenize(text)
-    for w in words:
-        if w.lower() not in stop_words:
-            filtered_list.append(w)
+    # filtered_list = []
+    # stop_words = nltk.corpus.stopwords.words('english')
+    # words = word_tokenize(text)
+    # for w in words:
+    #     if w.lower() not in stop_words:
+    #         filtered_list.append(w)
             
-    text = " ".join(filtered_list)
+    # text = " ".join(filtered_list)
 
 
     nlp = spacy.load('en_core_web_sm')
