@@ -40,7 +40,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         extractive_summary_len = len(extractive_summary.split())
         rawText_len = len(rawText.split())
 
-        obj = Topic.nodes.get_or_none(name=domain[0])
+        obj = Topic.nodes.get_or_none(name=domain)
         if obj:
             urls = obj.urls
             if url not in urls:
@@ -48,13 +48,13 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                 obj.urls = urls
                 obj.save()
         else:
-            obj = Topic(name=domain[0], level=0, weight=float(domain[1]), urls=[url])
+            obj = Topic(name=domain, level=0, urls=[url])
             obj.save()
         
-        for i in range(len(topics[0])):
-            topic_obj = Topic.nodes.get_or_none(name=topics[0][i])
+        for i in range(len(topics)):
+            topic_obj = Topic.nodes.get_or_none(name=topics[i])
             if not topic_obj:
-                topic_obj = Topic(name=topics[0][i], level=1, weight=topics[1][i], urls=[url])
+                topic_obj = Topic(name=topics[i], level=1, urls=[url])
                 topic_obj.save()
             else:
                 urls = topic_obj.urls
@@ -78,8 +78,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                                 "extractive_summary": extractive_summary,
                                 "rawText": rawText,
                             },
-                            "domain": domain[0],
-                            "topics": topics[0],
+                            "domain": domain,
+                            "topics": topics,
                             "keywords": keywords,
                             "original_lang": original_lang
                         }, status=status.HTTP_201_CREATED)

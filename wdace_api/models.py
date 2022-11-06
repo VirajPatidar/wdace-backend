@@ -10,7 +10,7 @@ class Topic(StructuredNode):
     uid = UniqueIdProperty()
     name = StringProperty(unique_index=True, required=True)
     level = IntegerProperty(required=True)
-    weight = FloatProperty(default=0.5)
+    # weight = FloatProperty(default=0.5)
     urls = ArrayProperty(StringProperty())
 
     #Relations
