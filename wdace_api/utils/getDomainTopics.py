@@ -70,16 +70,18 @@ def getDomainTopics(text):
 
     keywords = kw_extractor.extract_keywords(text)
 
+    topics = []
 
     for kw, v in keywords:
         if(100-v > 99.999):
           words = kw.split()
           keyw = " ".join(sorted(set(words), key=words.index))
-          print("Keyphrase: ",keyw, ": score", 100-v)
+          topics.append(keyw)
+        #   print("Keyphrase: ",keyw, ": score", 100-v)
 
 
-    domain = keywords[0]
-    topics = list(map(list, zip(*keywords[1:])))
+    domain = keywords[0][0]
+    topics = topics[1:]
 
     return domain, topics
 
