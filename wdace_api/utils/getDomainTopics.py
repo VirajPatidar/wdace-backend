@@ -6,6 +6,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import spacy
+import lemminflect
 
 
 
@@ -16,6 +17,7 @@ def getDomainTopics(text):
     # 2. Remove digits
     # 3. Convert to lowercase
     # 4. Remove stop words
+    # 5. Lemmatization
 
 
     def remove_punctuation(text):
@@ -28,7 +30,25 @@ def getDomainTopics(text):
     text=" ".join(text.split())
 
 
+    filtered_list = []
+    stop_words = nltk.corpus.stopwords.words('english')
+    words = word_tokenize(text)
+    for w in words:
+        if w.lower() not in stop_words:
+            filtered_list.append(w)
+            
+    text = " ".join(filtered_list)
 
+
+    nlp = spacy.load('en_core_web_sm')
+    doc = nlp(text)
+    lemmatised=[]
+
+    for item in doc:
+        item = item._.lemma()
+        lemmatised.append(item)
+
+    text=" ".join(lemmatised)
 
 
     # YAKE
