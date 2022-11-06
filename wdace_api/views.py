@@ -32,7 +32,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         title, mainText, extractive_summary = getTitleTextSummary(url)
 
         # Save in DB to build topic graph
-        domain, topics = getDomainTopics(mainText) # rawText gives noisy output
+        domain, topics = getDomainTopics(rawText)
         keywords = keyword_extractor(extractive_summary)
         
         title_len = len(title.split())
