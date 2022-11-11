@@ -24,9 +24,9 @@ class ClassifyAnalyseView(generics.GenericAPIView):
 
         url = request.data.get('url')
 
-        rawText = getTextFromURL(url)
-        original_lang = iso639.to_name(detect(rawText))
-        rawText = detect_and_translate(rawText, target_lang='en')
+        rawOriginalText = getTextFromURL(url)
+        original_lang = iso639.to_name(detect(rawOriginalText))
+        rawText = detect_and_translate(rawOriginalText, target_lang='en')
         
 
         title, mainText, extractive_summary = getTitleTextSummary(url)
@@ -38,6 +38,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         title_len = len(title.split())
         mainText_len = len(mainText.split())
         extractive_summary_len = len(extractive_summary.split())
+        rawOriginalText_len = len(rawOriginalText.split())
         rawText_len = len(rawText.split())
 
         obj = Topic.nodes.get_or_none(name=domain)
@@ -71,11 +72,13 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                                 "mainText_len": mainText_len, 
                                 "extractive_summary_len": extractive_summary_len, 
                                 "rawText_len": rawText_len, 
+                                "rawOriginalText_len": rawOriginalText_len
                             },
                             "textual_data": {
                                 "title": title,
                                 "mainText": mainText,
                                 "extractive_summary": extractive_summary,
+                                "rawOriginalText": rawOriginalText,
                                 "rawText": rawText,
                             },
                             "domain": domain,
