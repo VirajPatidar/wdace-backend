@@ -13,10 +13,9 @@ from .utils.getTitleTextSummary import getTitleTextSummary
 from .utils.getDomainTopics import getDomainTopics
 from .utils.scrapeURL import getTextFromURL
 
-from .models import Topic
+from .models import Document, Topic
 
 # Create your views here.
-
 
 class ClassifyAnalyseView(generics.GenericAPIView):
 
@@ -40,16 +39,21 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         extractive_summary_len = len(extractive_summary.split())
         rawText_len = len(rawText.split())
 
+        #----------------DOMAIN---------------#
+
         obj = Topic.nodes.get_or_none(name=domain[0])
         if obj:
+            obj.level = 0
             urls = obj.urls
             if url not in urls:
                 urls.append(url)
                 obj.urls = urls
-                obj.save()
+            obj.save()
         else:
             obj = Topic(name=domain[0], level=0, weight=float(domain[1]), urls=[url])
             obj.save()
+
+        #----------------TOPICS---------------#
         
         for i in range(len(topics[0])):
             topic_obj = Topic.nodes.get_or_none(name=topics[0][i])
@@ -64,6 +68,13 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                     topic_obj.save()
             obj.hasTopic.connect(topic_obj)
 
+        # Storing document information
+        doc = Document.nodes.get_or_none(url = url)
+        if not doc:
+            doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain[0], 
+            topics=topics[0], keywords=keywords)
+            doc.save()
+            
         return Response(
                         {
                             "len": {

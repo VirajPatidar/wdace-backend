@@ -1,3 +1,4 @@
+from tokenize import String
 from django.db import models
 
 # Create your models here.
@@ -15,3 +16,12 @@ class Topic(StructuredNode):
 
     #Relations
     hasTopic = RelationshipTo('Topic', 'HAS_TOPIC')
+
+class Document(StructuredNode):
+    uid = UniqueIdProperty()
+    url = StringProperty()
+    mainText = StringProperty()
+    extractiveSummary = StringProperty()
+    domain = StringProperty()
+    topics = ArrayProperty(StringProperty())
+    keywords = ArrayProperty(StringProperty())
