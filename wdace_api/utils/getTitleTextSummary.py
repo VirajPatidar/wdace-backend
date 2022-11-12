@@ -3,6 +3,9 @@ import string
 from readability import Document
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning 
+import iso639
+from langdetect import detect
+
 
 from .extractiveSummariser import extractive_summariser
 from .translate import detect_and_translate
@@ -23,8 +26,12 @@ def getTitleTextSummary(url):
     response = requests.get(url, headers=HEADERS)
 
     doc = Document(response.text)
+
     title = doc.title()
     raw_html = doc.summary()
+
+    original_lang = iso639.to_name(detect(raw_html))
+
 
     CLEANR = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});') 
     cleantext = re.sub(CLEANR, '', raw_html)
@@ -33,8 +40,10 @@ def getTitleTextSummary(url):
     mainText = mainText[:-1]
     mainText.strip()
 
-    title = detect_and_translate(title, target_lang='en')
-    mainText = detect_and_translate(mainText, target_lang='en')
+
+    if original_lang != 'English':
+        title = detect_and_translate(title, target_lang='en')
+        mainText = detect_and_translate(mainText, target_lang='en')
 
     extractive_summary = extractive_summariser(mainText)
 

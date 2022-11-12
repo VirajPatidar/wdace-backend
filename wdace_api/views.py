@@ -25,7 +25,13 @@ class ClassifyAnalyseView(generics.GenericAPIView):
 
         rawOriginalText = getTextFromURL(url)
         original_lang = iso639.to_name(detect(rawOriginalText))
-        rawText = detect_and_translate(rawOriginalText, target_lang='en')
+
+        rawText=""
+
+        if original_lang != 'English':
+            rawText = detect_and_translate(rawOriginalText, target_lang='en')
+        else:
+            rawText = rawOriginalText
         
 
         title, mainText, extractive_summary = getTitleTextSummary(url)
