@@ -17,6 +17,7 @@ class Topic(StructuredNode):
     #Relations
     hasTopic = RelationshipTo('Topic', 'HAS_TOPIC')
 
+
 class Document(StructuredNode):
     uid = UniqueIdProperty()
     url = StringProperty()

@@ -70,8 +70,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         # Storing document information
         doc = Document.nodes.get_or_none(url = url)
         if not doc:
-            doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain[0], 
-            topics=topics[0], keywords=keywords)
+            doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain, 
+            topics=topics, keywords=keywords)
             doc.save()
             
         return Response(
