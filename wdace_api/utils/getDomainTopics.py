@@ -7,7 +7,31 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import spacy
 import lemminflect
+from itertools import combinations
 
+nlp = spacy.load("en_core_web_md")
+
+def pre_process(titles):
+    """
+    Pre-processes titles by removing stopwords and lemmatizing text.
+    :param titles: list of strings, contains target titles,.
+    :return: preprocessed_title_docs, list containing pre-processed titles.
+    """
+
+    # Preprocess all the titles
+    title_docs = [nlp(x) for x in titles]
+    preprocessed_title_docs = []
+    lemmatized_tokens = []
+    for title_doc in title_docs:
+        for token in title_doc:
+            if not token.is_stop:
+                lemmatized_tokens.append(token.lemma_)
+        preprocessed_title_docs.append(" ".join(lemmatized_tokens))
+        del lemmatized_tokens[
+            :
+            ]  # empty the lemmatized tokens list as the code moves onto a new title
+
+    return preprocessed_title_docs
 
 
 def getDomainTopics(text):
@@ -84,4 +108,3 @@ def getDomainTopics(text):
     topics = topics[1:]
 
     return domain, topics
-
