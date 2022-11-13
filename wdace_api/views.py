@@ -14,6 +14,7 @@ from .utils.getDomainTopics import getDomainTopics
 from .utils.scrapeURL import getTextFromURL
 
 from .models import Document, Topic
+from neomodel import db
 
 # Create your views here.
 
@@ -46,6 +47,11 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         rawOriginalText_len = len(rawOriginalText.split())
         rawText_len = len(rawText.split())
 
+        #---------------SIMILAR DOCUMENTS-----------------#
+        similar_urls = []
+
+        #---------------DOMAIN-----------------#
+
         obj = Topic.nodes.get_or_none(name=domain)
         if obj:
             obj.level = 0
@@ -53,6 +59,12 @@ class ClassifyAnalyseView(generics.GenericAPIView):
             if url not in urls:
                 urls.append(url)
                 obj.urls = urls
+
+            #Getting similar documents
+            for u in urls:
+                if(u != url and u not in similar_urls):
+                    similar_urls.append(u)
+
             obj.save()
         else:
             obj = Topic(name=domain, level=0, urls=[url])
@@ -70,15 +82,28 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                 if url not in urls:
                     urls.append(url)
                     topic_obj.urls = urls
-                    topic_obj.save()
+
+                #Getting similar documents
+                for u in urls:
+                    if(u != url and u not in similar_urls):
+                        similar_urls.append(u)
+                
+                topic_obj.save()
+
             obj.hasTopic.connect(topic_obj)
 
-        # Storing document information
-        doc = Document.nodes.get_or_none(url = url)
-        if not doc:
-            doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain, 
-            topics=topics, keywords=keywords)
-            doc.save()
+
+        #---------------------SPECIALIZED TO GENERALIZED--------------------#
+        # children = {}
+        # children[obj.name] = ["hello", "world"]
+        # print(children)
+
+        # #Storing document information
+        # doc = Document.nodes.get_or_none(url = url)
+        # if not doc:
+        #     doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain, 
+        #     topics=topics, keywords=keywords)
+        #     doc.save()
             
         return Response(
                         {
@@ -99,7 +124,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                             "domain": domain,
                             "topics": topics,
                             "keywords": keywords,
-                            "original_lang": original_lang
+                            "original_lang": original_lang,
+                            "similar_urls": similar_urls
                         }, status=status.HTTP_201_CREATED)
 
 
