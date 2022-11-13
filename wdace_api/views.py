@@ -90,13 +90,40 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                 
                 topic_obj.save()
 
-            obj.hasTopic.connect(topic_obj)
-
+            if(obj.name != topic_obj.name):
+                if(not topic_obj.hasTopic.is_connected(obj)):
+                    obj.hasTopic.connect(topic_obj)
 
         #---------------------SPECIALIZED TO GENERALIZED--------------------#
+        #----------CHILDREN NODES-----------#
         children = {}
-        children[obj.name] = ["hello", "world"]
-        print(children)
+        traversal = []
+        traversal.append(obj)
+
+        for node in traversal:
+            childNodes = node.hasTopic.search(level = 0)
+            if childNodes:
+                children[node.name] = []
+                for c in childNodes:
+                    children[node.name].append(c.name)
+                    if c not in traversal:
+                        traversal.append(c)
+
+        #------------PARENT NODES------------#
+        parents = {}
+        traversal = []
+        traversal.append(obj)
+        
+        for node in traversal:
+            query = r"MATCH (t1:Topic {name: '" + node.name + r"'})<-[:HAS_TOPIC]-(t2:Topic {level: 0}) RETURN t2"
+            results, _ = db.cypher_query(query)
+            parent_topics = [Topic.inflate(row[0]) for row in results]
+            if parent_topics:
+                parents[node.name] = []
+                for p in parent_topics:
+                    if p not in traversal:
+                        parents[node.name].append(p.name)
+                        traversal.append(p)
 
         #Storing document information
         doc = Document.nodes.get_or_none(url = url)
@@ -125,7 +152,9 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                             "topics": topics,
                             "keywords": keywords,
                             "original_lang": original_lang,
-                            "similar_urls": similar_urls
+                            "similar_urls": similar_urls,
+                            "children_nodes": children,
+                            "parent_nodes": parents
                         }, status=status.HTTP_201_CREATED)
 
 
