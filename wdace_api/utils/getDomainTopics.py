@@ -150,8 +150,9 @@ def getDomainTopics(text):
           topics.append(keyw)
         #   print("Keyphrase: ",keyw, ": score", 100-v)
 
+    filtered_topics = similarity_filter(topics)
 
     domain = keywords[0][0]
-    topics = topics[1:]
+    topics = filtered_topics[1:]
 
     return domain, topics
