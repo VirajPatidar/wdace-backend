@@ -94,16 +94,16 @@ class ClassifyAnalyseView(generics.GenericAPIView):
 
 
         #---------------------SPECIALIZED TO GENERALIZED--------------------#
-        # children = {}
-        # children[obj.name] = ["hello", "world"]
-        # print(children)
+        children = {}
+        children[obj.name] = ["hello", "world"]
+        print(children)
 
-        # #Storing document information
-        # doc = Document.nodes.get_or_none(url = url)
-        # if not doc:
-        #     doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain, 
-        #     topics=topics, keywords=keywords)
-        #     doc.save()
+        #Storing document information
+        doc = Document.nodes.get_or_none(url = url)
+        if not doc:
+            doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain, 
+            topics=topics, keywords=keywords)
+            doc.save()
             
         return Response(
                         {
