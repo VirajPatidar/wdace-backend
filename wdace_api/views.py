@@ -1,7 +1,7 @@
 from django.shortcuts import render
-
 from rest_framework import generics, status
 from rest_framework.response import Response
+
 
 import iso639
 from langdetect import detect
@@ -15,8 +15,12 @@ from .utils.scrapeURL import getTextFromURL
 from .utils.currentURLStatus import currentURLStatus
 from .utils.getLbl2VecDomain import getDomain
 
+
 from .models import Document, Topic
 from neomodel import db
+
+
+
 
 # Create your views here.
 
@@ -27,12 +31,10 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         url = request.data.get('url')
         current_status = currentURLStatus(url)
         LbLDomain = getDomain()
-
         rawOriginalText = getTextFromURL(url)
         original_lang = iso639.to_name(detect(rawOriginalText))
 
         rawText=""
-
         if original_lang != 'English':
             rawText = detect_and_translate(rawOriginalText, target_lang='en')
         else:
@@ -51,11 +53,10 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         rawOriginalText_len = len(rawOriginalText.split())
         rawText_len = len(rawText.split())
 
+
         #---------------SIMILAR DOCUMENTS-----------------#
         similar_urls = []
-
         #---------------DOMAIN-----------------#
-
         obj = Topic.nodes.get_or_none(name=domain)
         if obj:
             obj.level = 0
@@ -63,19 +64,17 @@ class ClassifyAnalyseView(generics.GenericAPIView):
             if url not in urls:
                 urls.append(url)
                 obj.urls = urls
-
             #Getting similar documents
             for u in urls:
                 if(u != url and u not in similar_urls):
                     similar_urls.append(u)
-
             obj.save()
         else:
             obj = Topic(name=domain, level=0, urls=[url])
             obj.save()
 
+
         #----------------TOPICS---------------#
-        
         for i in range(len(topics)):
             topic_obj = Topic.nodes.get_or_none(name=topics[i])
             if not topic_obj:
@@ -97,6 +96,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
             if(obj.name != topic_obj.name):
                 if(not topic_obj.hasTopic.is_connected(obj)):
                     obj.hasTopic.connect(topic_obj)
+
 
         #---------------------SPECIALIZED TO GENERALIZED--------------------#
         #----------CHILDREN NODES-----------#
@@ -128,6 +128,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                     if p not in traversal:
                         parents[node.name].append(p.name)
                         traversal.append(p)
+
 
         #Storing document information
         doc = Document.nodes.get_or_none(url = url)
