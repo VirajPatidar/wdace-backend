@@ -11,6 +11,8 @@ from itertools import combinations
 
 nlp = spacy.load("en_core_web_md")
 
+
+
 def pre_process(titles):
     """
     Pre-processes titles by removing stopwords and lemmatizing text.
@@ -32,6 +34,8 @@ def pre_process(titles):
             ]  # empty the lemmatized tokens list as the code moves onto a new title
 
     return preprocessed_title_docs
+
+
 
 def similarity_filter(titles):
     """
@@ -81,6 +85,8 @@ def similarity_filter(titles):
         return similarity_filter(titles)
 
 
+
+
 def getDomainTopics(text):
     
     # PREPROCESSING
@@ -111,7 +117,7 @@ def getDomainTopics(text):
     # text = " ".join(filtered_list)
 
 
-    nlp = spacy.load('en_core_web_sm')
+    nlp = spacy.load('en_core_web_md')
     doc = nlp(text)
     lemmatised=[]
 
