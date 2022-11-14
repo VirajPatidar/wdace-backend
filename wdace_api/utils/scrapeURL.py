@@ -24,7 +24,7 @@ def tag_visible(element):
               'noscript', 'header', 'html', 'iframe', 'audio', 'picture',
               'meta', 'title', 'aside', 'footer', 'svg', 'base', 'figure',
               'form', 'nav', 'head', 'link', 'button', 'source', 'canvas',
-              'br', 'input', 'script', 'wbr', 'video', 'param', 'hr', 'li', 'ol', 'ul', 'table', 'th', 'tr', 'td', 'a', 'button', 'span']
+              'br', 'input', 'script', 'wbr', 'video', 'param', 'hr', 'table', 'th', 'tr', 'td', 'button']
                 
     if element.parent.name in blacklist:
         return False
