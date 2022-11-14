@@ -159,6 +159,6 @@ def getDomainTopics(text):
     filtered_topics = similarity_filter(topics)
 
     domain = keywords[0][0]
-    topics = filtered_topics
+    topics = filtered_topics[1:]
 
     return domain, topics
