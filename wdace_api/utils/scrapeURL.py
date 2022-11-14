@@ -21,10 +21,10 @@ HEADERS = ({'User-Agent':
 # Helper function to filter out futile HTML tags
 def tag_visible(element):
     blacklist = ['style', 'label', '[document]', 'embed', 'img', 'object',
-                'noscript', 'header', 'html', 'iframe', 'audio', 'picture',
-                'meta', 'title', 'aside', 'footer', 'svg', 'base', 'figure',
-                'form', 'nav', 'head', 'link', 'button', 'source', 'canvas',
-                'br', 'input', 'script', 'wbr', 'video', 'param', 'hr']
+              'noscript', 'header', 'html', 'iframe', 'audio', 'picture',
+              'meta', 'title', 'aside', 'footer', 'svg', 'base', 'figure',
+              'form', 'nav', 'head', 'link', 'button', 'source', 'canvas',
+              'br', 'input', 'script', 'wbr', 'video', 'param', 'hr', 'li', 'ol', 'ul', 'table', 'th', 'tr', 'td', 'a', 'button', 'span']
                 
     if element.parent.name in blacklist:
         return False
