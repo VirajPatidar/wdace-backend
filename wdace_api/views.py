@@ -12,6 +12,8 @@ from .utils.keywordExtractor import keyword_extractor
 from .utils.getTitleTextSummary import getTitleTextSummary
 from .utils.getDomainTopics import getDomainTopics
 from .utils.scrapeURL import getTextFromURL
+from .utils.currentURLStatus import currentURLStatus
+from .utils.getLbl2VecDomain import getDomain
 
 from .models import Document, Topic
 from neomodel import db
@@ -23,6 +25,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
     def post(self, request):
 
         url = request.data.get('url')
+        current_status = currentURLStatus(url)
+        LbLDomain = getDomain()
 
         rawOriginalText = getTextFromURL(url)
         original_lang = iso639.to_name(detect(rawOriginalText))
@@ -131,9 +135,20 @@ class ClassifyAnalyseView(generics.GenericAPIView):
             doc = Document(url=url, mainText=mainText, extractiveSummary=extractive_summary, domain=domain, 
             topics=topics, keywords=keywords)
             doc.save()
+
+        
             
         return Response(
                         {
+                            "LbLDomain": LbLDomain,
+                            "domain": domain,
+                            "topics": topics,
+                            "keywords": keywords,
+                            "original_lang": original_lang,
+                            "similar_urls": similar_urls,
+                            "children_nodes": children,
+                            "parent_nodes": parents,
+                            "current_status": current_status,
                             "len": {
                                 "title_len": title_len, 
                                 "mainText_len": mainText_len, 
@@ -147,14 +162,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
                                 "extractive_summary": extractive_summary,
                                 "rawOriginalText": rawOriginalText,
                                 "rawText": rawText,
-                            },
-                            "domain": domain,
-                            "topics": topics,
-                            "keywords": keywords,
-                            "original_lang": original_lang,
-                            "similar_urls": similar_urls,
-                            "children_nodes": children,
-                            "parent_nodes": parents
+                            }
                         }, status=status.HTTP_201_CREATED)
 
 
