@@ -30,7 +30,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
 
         url = request.data.get('url')
         current_status = currentURLStatus(url)
-        LbLDomain = getDomain()
+        # LbLDomain = getDomain()
         rawOriginalText = getTextFromURL(url)
         original_lang = iso639.to_name(detect(rawOriginalText))
 
@@ -42,6 +42,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         
 
         title, mainText, extractive_summary = getTitleTextSummary(url)
+        lbl_domain, similarityScore = getDomain(title, mainText)
 
         # Save in DB to build topic graph
         domain, topics = getDomainTopics(rawText)
@@ -141,7 +142,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
             
         return Response(
                         {
-                            "LbLDomain": LbLDomain,
+                            "LbLDomain": lbl_domain,
+							'similarityScore': similarityScore,
                             "domain": domain,
                             "topics": topics,
                             "keywords": keywords,
