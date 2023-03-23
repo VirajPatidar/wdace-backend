@@ -13,7 +13,8 @@ from .utils.getTitleTextSummary import getTitleTextSummary
 from .utils.getDomainTopics import getDomainTopics
 from .utils.scrapeURL import getTextFromURL
 from .utils.currentURLStatus import currentURLStatus
-from .utils.getLbl2VecDomain import getDomain
+# from .utils.getLbl2VecDomain import getDomain
+from .utils.clusterPredict import getDomain
 
 
 from .models import Document, Topic
@@ -42,7 +43,8 @@ class ClassifyAnalyseView(generics.GenericAPIView):
         
 
         title, mainText, extractive_summary = getTitleTextSummary(url)
-        lbl_domain, similarityScore = getDomain(title, mainText)
+        # lbl_domain, similarityScore = getDomain(title, mainText)
+        clusterDomain, similarityScore = getDomain(title + mainText)
 
         # Save in DB to build topic graph
         domain, topics = getDomainTopics(rawText)
@@ -142,7 +144,7 @@ class ClassifyAnalyseView(generics.GenericAPIView):
             
         return Response(
                         {
-                            "LbLDomain": lbl_domain,
+                            "LbLDomain": clusterDomain,
 							'similarityScore': similarityScore,
                             "domain": domain,
                             "topics": topics,
