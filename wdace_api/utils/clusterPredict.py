@@ -54,10 +54,20 @@ def get_class(bow_text):
 			maxs = s; maxi = i
 	return (classes[maxi], maxs)
 
+def update_model(bow_text):
+	print('Model update started')
+	try:
+		topics_model = topics_model.update(bow_text)
+		print('Model update success')
+	except:
+		print('Model update failed')
+	return 0
+
 def getDomain(text):
 	cleaned_text = clean_text(text)
 	bow_text = text_to_bow(cleaned_text)
 	(text_class, sim_score) = get_class(bow_text)
+	if sim_score > 0.9: update_model(bow_text)
 	return (text_class, sim_score)
 
 # inp_text = '''Amazon has announced that it will be hiring 75,000 new employees across its fulfillment and transportation networks in the United States and Canada. The new hires will work in various roles, including pickers, packers, and drivers, and will receive an average starting wage of $17 per hour, along with signing bonuses of up to $1,000. This move comes as the company continues to experience high demand for its products and services, and seeks to improve its delivery times and customer experience. Amazon has been one of the few companies to experience growth during the pandemic, and this hiring spree is a sign that the company is committed to continuing that trend. The new hires will join Amazon's existing workforce of more than 800,000 employees in North America.'''
