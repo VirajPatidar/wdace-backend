@@ -45,7 +45,7 @@ def text_to_bow(cleaned_inp_text):
 	return bow_text
 
 def get_class(bow_text):
-	classes = {0: "Science & Tech", 1: "World", 2: "Sports", 3: "Business"}
+	classes = {0: "Business", 1: "Sports", 2: "World", 3: "Science & Tech"}
 	vector = topics_model[bow_text]
 	maxi = 0; maxs = 0
 	for i, s in vector:	# index, score
@@ -57,10 +57,11 @@ def get_class(bow_text):
 def update_model(bow_text):
 	print('Model update started')
 	try:
-		topics_model = topics_model.update(bow_text)
+		topics_model = topics_model.update([bow_text])
 		print('Model update success')
-	except:
+	except Exception as e:
 		print('Model update failed')
+		print(e)
 	return 0
 
 def getDomain(text):
